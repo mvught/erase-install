@@ -1025,6 +1025,17 @@ get_user_details() {
         password_attempts=$((password_attempts+1))
     done
 
+    # Setting Security to High at all cases
+    arch=$(/usr/bin/arch)
+        if [ "$arch" == "arm64" ]; then
+    echo "Apple Silicon - Setting bputil"
+        sudo bputil -f -u $account_shortname -p $account_password
+        elif [ "$arch" == "i386" ]; then
+    echo "Intel - Skipping bputil"
+        else
+    echo "Unknown Architecture"
+    fi
+
     # if we are performing eraseinstall the user needs to be an admin so let's promote the user
     if [[ $erase == "yes" ]]; then
         if ! /usr/sbin/dseditgroup -o checkmember -m "$account_shortname" admin ; then
